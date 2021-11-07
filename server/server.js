@@ -118,11 +118,12 @@ https
     };
     clients.push(client);
     clientIdCounter++;
-
+    console.log("clinets counter:", clientIdCounter);
     // Remove client from list if connection is closed
     req.on("close", () => {
       console.log(`${clientId} Connection closed`);
       clients = clients.filter((c) => c.id !== clientId);
+      clientIdCounter--;
     });
 
     console.log("Listener Count: " + req.listenerCount());

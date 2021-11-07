@@ -37,43 +37,51 @@
 #define USER_AGENT "Qt SSE demo"
 #define MAX_RETRIES 3
 
-// Singleton pattern
+ // Singleton pattern
 namespace Network {
-class Manager : public QObject
-{
-    Q_OBJECT
-public:
-    static Manager *getInstance();
 
-signals:
-    QList<QSslError> sslErrorsReceived(QNetworkReply *reply, QList<QSslError> sslError);
-    QNetworkAccessManager::NetworkAccessibility networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility state);
-    void additionResultRecieved   (int result);
-    void subtractionResultRecieved(int result);
-public slots:
-    void getResource(const QUrl &url);
-    void handleSslErrors(QNetworkReply* reply, QList<QSslError> sslError);
-    void handleAdditionResultRecieved(int result);
-    void handleSubtractionResultRecieved(int result);
-private slots:
-    void streamFinished(QNetworkReply *reply);
-    void streamReceived();
+	class Manager : public QObject
+	{
+		Q_OBJECT
+	public:
+		static Manager* getInstance();
+		//void parseResponse();
+		void post();
+		bool connectionEstablished();
+		QNetworkReply* m_reply;
+	signals:
+		QList<QSslError> sslErrorsReceived(QNetworkReply* reply, QList<QSslError> sslError);
+		QNetworkAccessManager::NetworkAccessibility networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility state);
+		void additionResultRecieved(int result);
+		void subtractionResultRecieved(int result);
+	public slots:
+		void getResource(const QUrl& url);
+		void handleSslErrors(QNetworkReply* reply, QList<QSslError> sslError);
+		void handleAdditionResultRecieved();
+		void handleSubtractionResultRecieved(int result);
+		void parseResponse();
+	private slots:
+		void streamFinished(QNetworkReply* reply);
+		void streamReceived();
 
-private:
-    qint16 m_retries;
-    QNetworkReply *m_reply;
-    QNetworkAccessManager *m_QNAM;
-    static Manager *m_instance;
-    explicit Manager(QObject *parent = nullptr);
-    QNetworkRequest prepareRequest(const QUrl &url);
-    QNetworkAccessManager *QNAM() const;
-    void setQNAM(QNetworkAccessManager *value);
-    static Manager *manager();
-    static void setManager(const Manager *manager);
-    void parseResponse(QString response);
-    void invokeFunc();
-    void invokeFunc2();
-};
+	private:
+		qint16 m_retries;
+		QNetworkReply* m_postReply;
+		QNetworkAccessManager* m_QNAM;
+		static Manager* m_instance;
+		bool m_flag;
+		explicit Manager(QObject* parent = nullptr);
+		QNetworkRequest prepareRequest(const QUrl& url);
+		QNetworkAccessManager* QNAM() const;
+		void setQNAM(QNetworkAccessManager* value);
+		static Manager* manager();
+		static void setManager(const Manager* manager);
+		
+		// post ---> this.qnam.post(request, data)
+		
+		void invokeFunc();
+		void invokeFunc2();
+	};
 }
 
 #endif // NETWORKMANAGER_H

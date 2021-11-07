@@ -10,7 +10,7 @@ void ConfigurationSection::start() {
   QStringList keys = settings.allKeys();
 
   for (QString key : keys) {
-      qDebug() << key << settings.value(key).toString();
+      //qDebug() << key << settings.value(key).toString();
       m_Configurations.insert(key, settings.value(key).toString());
   }
 }

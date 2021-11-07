@@ -20,6 +20,14 @@
 #include "networkmanager.h"
 #include <iostream>
 
+Network::Manager* g_manager;
+
+
+void makePost()
+{
+    g_manager->post();
+}
+
 int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
@@ -27,13 +35,16 @@ int main(int argc, char* argv[])
 
     // Construct a Network::Manager instance
     Network::Manager* manager = Network::Manager::getInstance();
-
+    g_manager = manager;
 
     if (argc == 2) {
         // Connect to the resource given by argv[1]
         std::cout << "press any key when ready\n"; std::cin.get();
 
+        
         manager->getResource(QUrl(argv[1]));
+        QObject::connect(manager->m_reply, &QNetworkReply::readyRead, &makePost);
+       
     }
     else {
         qInfo() << "USAGE: ./qt-sse-demo URL";

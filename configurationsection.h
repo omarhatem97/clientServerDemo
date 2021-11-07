@@ -18,11 +18,6 @@ public:
   static QString readConfigurationValue(QString key);
 
   /**
-   * @brief Alters specified configuration value in configuration writable.
-   */
-  static void writeConfigurationValue(QString key, QString value);
-
-  /**
    * @brief Gets the folder path where you have to get the configuration.
    * @return path folder path to configuration file
    */
@@ -38,7 +33,6 @@ public:
   */
   static void end();
 
- 
 
 private:
   static QString m_ConfigFile;
