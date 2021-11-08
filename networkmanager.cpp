@@ -69,9 +69,6 @@ Network::Manager* Network::Manager::getInstance()
 
 // Invokers
 /**
- * @file networkmanager.cpp
- * @author Dylan Van Assche
- * @date 21 Jan 2019
  * @brief Get a resource
  * @param const QUrl &url
  * @param QObject *caller
@@ -86,13 +83,23 @@ void Network::Manager::getResource(const QUrl& url)
 	qDebug() << "GET resource:" << url;
 	QNetworkRequest request = this->prepareRequest(url);
 
-	m_reply = this->QNAM()->get(request);
 
+	//Debugging
+	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+	QJsonObject obj;
+	obj["num"] = "5";
+	obj["num1"] = "3";
+	obj["op"] = "diff";
+	QJsonDocument doc(obj);
+	QByteArray data = doc.toJson();
+
+	//End Debugging
+
+	m_reply = this->QNAM()->post(request, data);
+	//m_reply = this->QNAM()->get(request);
 	connect(m_reply, SIGNAL(readyRead()), this, SLOT(streamReceived()));
 	//connect(this, SIGNAL(readyRead()), this, SLOT(()));
-	
-
-
 }
 
 void Network::Manager::streamFinished(QNetworkReply* reply)
@@ -101,7 +108,7 @@ void Network::Manager::streamFinished(QNetworkReply* reply)
 	qDebug() << "Reconnecting...";
 	if (m_retries < MAX_RETRIES) {
 		m_retries++;
-		this->getResource(reply->url());
+		//this->getResource(reply->url());
 	}
 	else {
 		qCritical() << "Unable to reconnect, max retries reached";
@@ -271,7 +278,7 @@ void Network::Manager::parseResponse()
 	if (mp["FunctionName"] == "ADD")
 	{
 
-		qInfo() << "ADDITION" << (mp["Result"].toInt());
+		qInfo() << "Addition operation occured and the Result is :" << (mp["Result"].toInt());
 	}
 	else if (mp["FunctionName"] == "SUBTRACT")
 	{

@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 
         
         manager->getResource(QUrl(argv[1]));
-        QObject::connect(manager->m_reply, &QNetworkReply::readyRead, &makePost);
+       // QObject::connect(manager->m_reply, &QNetworkReply::readyRead, &makePost);
        
     }
     else {
