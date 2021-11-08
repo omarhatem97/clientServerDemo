@@ -79,24 +79,17 @@ Network::Manager* Network::Manager::getInstance()
  * The result as a QNetworkReply *reply will be available through the Qt event system.
  * Implement the customEvent() method in your QObject to receive the data.
  */
-void Network::Manager::getResource(const QUrl& url)
+void Network::Manager::getResource(QUrl& url)
 {
 	qDebug() << "GET resource:" << url;
 	chId = QUuid::createUuid().toString().mid(1, 36);
-	//QNetworkRequest request = this->prepareRequest(url);
-	QNetworkRequest request = QNetworkRequest(QUrl("http://localhost:3000/"+ chId + "/listen"));
+	m_url = url.toString()+"/" + chId;
+	qDebug() << "m url" << m_url;
+	QNetworkRequest request = this->prepareRequest(QUrl(m_url + "/listen"));
+	//QNetworkRequest request = QNetworkRequest(QUrl("http://localhost:3000/"+ chId + "/listen"));
 
-	//Debugging
 	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-	QJsonObject obj;
-	obj["num"] = "5";
-	obj["num1"] = "3";
-	obj["op"] = "diff";
-	QJsonDocument doc(obj);
-	QByteArray data = doc.toJson();
-
-	//End Debugging
 
 	//m_reply = this->QNAM()->post(request, data);
 	m_reply = this->QNAM()->get(request);
@@ -129,7 +122,7 @@ void Network::Manager::streamReceived()
 	if (!m_flag)
 	{
 		//Make a Post request to the server only once
-		QNetworkRequest request =QNetworkRequest(QUrl("http://localhost:3000/" + chId + "/send"));
+		QNetworkRequest request =QNetworkRequest(QUrl(m_url + "/send"));
 		//Debugging
 		request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
@@ -168,6 +161,7 @@ void Network::Manager::streamReceived()
  */
 QNetworkRequest Network::Manager::prepareRequest(const QUrl& url)
 {
+	qDebug() << url;
 	QNetworkRequest request(url);
 	//request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, false);
 	QSslConfiguration config = QSslConfiguration::defaultConfiguration();

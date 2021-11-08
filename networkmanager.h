@@ -32,6 +32,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QSslError>
+#include <QUrl>
 
 #define ACCEPT_HEADER "text/event-stream"
 #define USER_AGENT "Qt SSE demo"
@@ -61,7 +62,7 @@ namespace Network {
 		void additionResultRecieved(int result);
 		void subtractionResultRecieved(int result);
 	public slots:
-		void getResource(const QUrl& url);
+		void getResource(QUrl& url);
 		void handleSslErrors(QNetworkReply* reply, QList<QSslError> sslError);
 		void handleAdditionResultRecieved();
 		void handleSubtractionResultRecieved(int result);
@@ -86,6 +87,7 @@ namespace Network {
 		QString chId;
 		
 		QString m_op, m_num, m_num1;
+		QString m_url;
 
 		// post ---> this.qnam.post(request, data)
 		

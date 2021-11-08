@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
         manager->setNum(num);
         manager->setOp(op);
         manager->setNum1(num1);
-        manager->getResource(QUrl(argv[1]));    
+        manager->getResource(QUrl(argv[1]));
     }
     else {
         qInfo() << "USAGE: ./qt-sse-demo URL";

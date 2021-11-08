@@ -1,9 +1,19 @@
 const express = require("express");
+const fs = require("fs");
+var https = require("https");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const channels = {};
+
+const options = {
+  key: fs.readFileSync("key.pem"),
+  cert: fs.readFileSync("cert.pem"),
+  ca: fs.readFileSync("softlockca.crt"),
+  requestCert: true,
+  rejectUnauthorized: true,
+};
 
 function sendEventsToAll(event, channelId) {
   if (!channels[channelId]) {
@@ -22,12 +32,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.post("/:channelId/send", (req, res, next) => {
   const { channelId } = req.params;
 
-  console.log(req.body);
-  //   req.on("data", (data) => {
-  //     requestObject = JSON.parse(data);
-  //     let response = prepareResponse(requestObject, res);
-  //     sendEventsToAll(response, channelId);
-  //   });
   prepareResponse(req.body, res).then((response) => {
     sendEventsToAll(response, channelId);
   });
@@ -37,6 +41,7 @@ app.post("/:channelId/send", (req, res, next) => {
 
 //Subscribe to the server
 app.get("/:channelId/listen", function (req, res) {
+  console.log("hello");
   res.writeHead(200, {
     "Content-Type": "text/event-stream",
     Connection: "keep-alive",
@@ -71,9 +76,11 @@ app.get("/:channelId/listen", function (req, res) {
   });
 });
 
-app.listen(3000, function () {
-  console.log("SSE Tchat listening on port 3000!");
-});
+https.createServer(options, app).listen(3000, function () {
+    console.log("SSE Tchat listening on port 3000!");
+  });
+
+
 
 //Helper functions-----------------------------
 prepareResponse = (requestObject, res) => {
