@@ -1,12 +1,12 @@
 # Qt-Server-Sent-Events-Demo
 
-A Qt5 Server Sent Events (SSE) demo.
+A Qt5 Https Server Sent Events (SSE) demo.
 
 ## Build instructions
 
 - `cmake CMakeLists.txt`
 - `make`
-- `./qt-sse-demo <URL>`
+- `qt-sse-demo.exe <URL> <add/diff> <num> <num1>`
 
 ## Demo
 
@@ -19,26 +19,19 @@ To run it, you need NodeJS and Yarn installed:
 - `yarn install`
 - `yarn start`
 
-The demo server runs on port `3000` and publishes events on `/events`.
+The demo server runs on port `3000` and publishes events on `/{channelId}/listen`.
+and the following requests get sent to `/{channelId}/send`.
 
 **Demo time!**
 
+first, make sure to update the configuration.ini file with the correct certificates and key paths then copy it to the Qt client application executable folder.
+
 Start the Qt SSE demo with our SSE demo server as URL:
 
-`./qt-sse-demo http://localhost:3000/events`
+examples:
 
-```
-[dylan@desktop Qt-Server-Sent-Events-Demo]$ ./qt-sse-demo http://localhost:3000/events
-Qt Server Sent Events demo, written by Dylan Van Assche.
-Creating new Network::Manager
-GET resource: QUrl("http://localhost:3000/events")
-Received event from stream
-"{\"timestamp\":\"Wed Jun 17 2020 19:09:17 GMT+0200 (Central European Summer Time)\",\"message\":\"Hello World!\"}"
------------------------------------------------------
-Received event from stream
-"{\"timestamp\":\"Wed Jun 17 2020 19:09:21 GMT+0200 (Central European Summer Time)\",\"message\":\"Hello World!\"}"
------------------------------------------------------
-Received event from stream
-"{\"timestamp\":\"Wed Jun 17 2020 19:09:26 GMT+0200 (Central European Summer Time)\",\"message\":\"Hello World!\"}"
------------------------------------------------------
-```
+`qt-sse-demo.exe http://localhost:3000/ diff 5 3' `qt-sse-demo.exe http://localhost:3000/ add 2 4'
+
+the server wait for a random time then send response to subscriber at http://localhost:3000/{channelId}/listen
+
+based on Qt Server Sent Events demo, written by Dylan Van Assche.
