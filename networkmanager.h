@@ -48,51 +48,45 @@ namespace Network {
 		static Manager* getInstance();
 		//void parseResponse();
 		void post();
-		bool connectionEstablished();
 		void setOp  (QString op);
 		void setNum (QString num);
 		void setNum1(QString num1);
-		QString getOp();
-		QString getNum ();
-		QString getNum1();
 		QNetworkReply* m_reply;
+
+
 	signals:
 		QList<QSslError> sslErrorsReceived(QNetworkReply* reply, QList<QSslError> sslError);
 		QNetworkAccessManager::NetworkAccessibility networkAccessibleChanged(QNetworkAccessManager::NetworkAccessibility state);
 		void additionResultRecieved(int result);
 		void subtractionResultRecieved(int result);
+	
 	public slots:
 		void getResource(QUrl& url);
+		
+	private slots:
+		void streamFinished(QNetworkReply* reply);
+		void streamReceived();
 		void handleSslErrors(QNetworkReply* reply, QList<QSslError> sslError);
 		void handleAdditionResultRecieved();
 		void handleSubtractionResultRecieved(int result);
 		void parseResponse();
-	private slots:
-		void streamFinished(QNetworkReply* reply);
-		void streamReceived();
 
 	private:
 		qint16 m_retries;
 		QNetworkReply* m_postReply;
 		QNetworkAccessManager* m_QNAM;
 		static Manager* m_instance;
-		bool m_flag;
+		bool m_alreadyPosted;
 		explicit Manager(QObject* parent = nullptr);
 		QNetworkRequest prepareRequest(const QUrl& url);
 		QNetworkAccessManager* QNAM() const;
 		void setQNAM(QNetworkAccessManager* value);
-		void setChId();
 		static Manager* manager();
 		static void setManager(const Manager* manager);
 		QString chId;
 		
 		QString m_op, m_num, m_num1;
 		QString m_url;
-
-		// post ---> this.qnam.post(request, data)
-		
-		void invokeFunc();
-		void invokeFunc2();
 	};
 }
 

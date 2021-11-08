@@ -48,7 +48,7 @@ Network::Manager::Manager(QObject* parent)
 
 	// Init retries counter
 	m_retries = 0;
-	m_flag = 0;
+	m_alreadyPosted = 0;
 }
 /* Van Assche
  * @date 21 Jan 2019
@@ -89,18 +89,15 @@ void Network::Manager::getResource(QUrl& url)
 	//QNetworkRequest request = QNetworkRequest(QUrl("http://localhost:3000/"+ chId + "/listen"));
 
 	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-
-	//m_reply = this->QNAM()->post(request, data);
 	m_reply = this->QNAM()->get(request);
 	connect(m_reply, SIGNAL(readyRead()), this, SLOT(streamReceived()));
-	//connect(this, SIGNAL(readyRead()), this, SLOT(()));
+	
 }
 
 void Network::Manager::streamFinished(QNetworkReply* reply)
 {
 	qDebug() << "Stream finished:" << reply->url();
-	qDebug() << "Reconnecting...";
+	//qDebug() << "Reconnecting...";
 	if (m_retries < MAX_RETRIES) {
 		m_retries++;
 		//this->getResource(reply->url());
@@ -119,7 +116,7 @@ void Network::Manager::streamReceived()
 	qDebug() << "-----------------------------------------------------";
 	m_retries = 0;
 
-	if (!m_flag)
+	if (!m_alreadyPosted)
 	{
 		//Make a Post request to the server only once
 		QNetworkRequest request =QNetworkRequest(QUrl(m_url + "/send"));
@@ -135,15 +132,7 @@ void Network::Manager::streamReceived()
 		request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
 		this->QNAM()->post(request, data);
 	}
-
-	m_flag = 1;
-	
-	
-	//post();
-	//invokeFunc();
-	////QThread::sleep(2);
-	//invokeFunc2();
-	//parseResponse();
+	m_alreadyPosted = 1;
 
 }
 
@@ -163,10 +152,7 @@ QNetworkRequest Network::Manager::prepareRequest(const QUrl& url)
 {
 	qDebug() << url;
 	QNetworkRequest request(url);
-	//request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, false);
 	QSslConfiguration config = QSslConfiguration::defaultConfiguration();
-
-	//config.setProtocol(QSsl::TlsV1_2);
 
 	//load configurations
 	ConfigurationSection::start();
@@ -249,15 +235,6 @@ void Network::Manager::handleSubtractionResultRecieved(int result)
 	qDebug() << "Subtraction operation occured, the result is " << result;
 }
 
-//Alert!!!! for debugging onlyyy
-void print(QList<QString>& l, QString word)
-{
-	qDebug() << word;
-	for (auto i : l)
-	{
-		qDebug().noquote() << i << ' ';
-	}
-}
 
 QString removeRubbish(QString s)
 {
@@ -267,7 +244,6 @@ QString removeRubbish(QString s)
 		.remove("{");
 	return res;
 }
-
 
 void Network::Manager::parseResponse()
 {
@@ -331,11 +307,6 @@ void Network::Manager::post()
 	connect(m_postReply, &QNetworkReply::readyRead, this, &Network::Manager::parseResponse);
 }
 
-bool Network::Manager::connectionEstablished()
-{
-	return m_flag ? true : false;
-}
-
 void Network::Manager::setOp(QString op)
 {
 	m_op = op;
@@ -351,61 +322,7 @@ void Network::Manager::setNum1(QString num1)
 	m_num1 = num1;
 }
 
-QString Network::Manager::getOp()
-{
-	return m_op;
-}
 
-QString Network::Manager::getNum()
-{
-	return m_num;
-}
-
-QString Network::Manager::getNum1()
-{
-	return m_num1;
-}
-
-void Network::Manager::invokeFunc()
-{
-	QNetworkAccessManager* mgr = this->QNAM();
-	const QUrl url(QStringLiteral("https://localhost:3000/"));
-	QNetworkRequest request(url);
-	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-	QJsonObject obj;
-	obj["num"] = "5";
-	obj["num1"] = "3";
-	obj["op"] = "add";
-	QJsonDocument doc(obj);
-	QByteArray data = doc.toJson();
-	// or
-	// QByteArray data("{\"key1\":\"value1\",\"key2\":\"value2\"}");
-	QNetworkReply* reply = mgr->post(request, data);
-
-	//qDebug() << "Method is invoked";
-
-}
-
-void Network::Manager::invokeFunc2()
-{
-	QNetworkAccessManager* mgr = this->QNAM();
-	const QUrl url(QStringLiteral("https://localhost:3000/"));
-	QNetworkRequest request(url);
-	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-	QJsonObject obj;
-	obj["num"]	= "5";
-	obj["num1"] = "3";
-	obj["op"]	= "diff";
-	QJsonDocument doc(obj);
-	QByteArray data = doc.toJson();
-	// or
-	// QByteArray data("{\"key1\":\"value1\",\"key2\":\"value2\"}");
-	QNetworkReply* reply = mgr->post(request, data);
-
-	//qDebug() << "Method 2 is invoked";
-}
 
 
 	
