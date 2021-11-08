@@ -74,8 +74,10 @@ namespace Network {
 		QNetworkRequest prepareRequest(const QUrl& url);
 		QNetworkAccessManager* QNAM() const;
 		void setQNAM(QNetworkAccessManager* value);
+		void setChId();
 		static Manager* manager();
 		static void setManager(const Manager* manager);
+		QString chId;
 		
 		// post ---> this.qnam.post(request, data)
 		

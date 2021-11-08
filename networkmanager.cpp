@@ -6,6 +6,7 @@
 #include "networkmanager.h"
 #include "configurationsection.h"
 #include <QSsl>
+#include<QUuid>
 //#include <qInfo>
 Network::Manager* Network::Manager::m_instance = nullptr;
 
@@ -81,8 +82,9 @@ Network::Manager* Network::Manager::getInstance()
 void Network::Manager::getResource(const QUrl& url)
 {
 	qDebug() << "GET resource:" << url;
-	QNetworkRequest request = this->prepareRequest(url);
-
+	chId = QUuid::createUuid().toString().mid(1, 36);
+	//QNetworkRequest request = this->prepareRequest(url);
+	QNetworkRequest request = QNetworkRequest(QUrl("http://localhost:3000/"+ chId + "/listen"));
 
 	//Debugging
 	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -96,8 +98,8 @@ void Network::Manager::getResource(const QUrl& url)
 
 	//End Debugging
 
-	m_reply = this->QNAM()->post(request, data);
-	//m_reply = this->QNAM()->get(request);
+	//m_reply = this->QNAM()->post(request, data);
+	m_reply = this->QNAM()->get(request);
 	connect(m_reply, SIGNAL(readyRead()), this, SLOT(streamReceived()));
 	//connect(this, SIGNAL(readyRead()), this, SLOT(()));
 }
@@ -123,7 +125,27 @@ void Network::Manager::streamReceived()
 	qDebug() << response;
 	qDebug() << "-----------------------------------------------------";
 	m_retries = 0;
+
+	if (!m_flag)
+	{
+		//Make a Post request to the server only once
+		QNetworkRequest request =QNetworkRequest(QUrl("http://localhost:3000/" + chId + "/send"));
+		//Debugging
+		request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+		QJsonObject obj;
+		obj["num"] = "5";
+		obj["num1"] = "3";
+		obj["op"] = "diff";
+		QJsonDocument doc(obj);
+		QByteArray data = doc.toJson();
+		request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
+		this->QNAM()->post(request, data);
+	}
+
 	m_flag = 1;
+	
+	
 	//post();
 	//invokeFunc();
 	////QThread::sleep(2);
