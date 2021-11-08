@@ -134,9 +134,9 @@ void Network::Manager::streamReceived()
 		request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
 		QJsonObject obj;
-		obj["num"] = "5";
-		obj["num1"] = "3";
-		obj["op"] = "diff";
+		obj["num"]  = m_num;
+		obj["num1"] = m_num1;
+		obj["op"]   = m_op;
 		QJsonDocument doc(obj);
 		QByteArray data = doc.toJson();
 		request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
@@ -340,6 +340,36 @@ void Network::Manager::post()
 bool Network::Manager::connectionEstablished()
 {
 	return m_flag ? true : false;
+}
+
+void Network::Manager::setOp(QString op)
+{
+	m_op = op;
+}
+
+void Network::Manager::setNum(QString num)
+{
+	m_num = num;
+}
+
+void Network::Manager::setNum1(QString num1)
+{
+	m_num1 = num1;
+}
+
+QString Network::Manager::getOp()
+{
+	return m_op;
+}
+
+QString Network::Manager::getNum()
+{
+	return m_num;
+}
+
+QString Network::Manager::getNum1()
+{
+	return m_num1;
 }
 
 void Network::Manager::invokeFunc()

@@ -46,6 +46,18 @@ int main(int argc, char* argv[])
        // QObject::connect(manager->m_reply, &QNetworkReply::readyRead, &makePost);
        
     }
+    else if (argc == 5) {
+        std::cout << "press any key when ready\n"; std::cin.get();
+
+        QString op = argv[2];
+        QString num = argv[3];
+        QString num1 = argv[4];
+
+        manager->setNum(num);
+        manager->setOp(op);
+        manager->setNum1(num1);
+        manager->getResource(QUrl(argv[1]));    
+    }
     else {
         qInfo() << "USAGE: ./qt-sse-demo URL";
         app.exit();

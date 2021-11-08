@@ -48,6 +48,12 @@ namespace Network {
 		//void parseResponse();
 		void post();
 		bool connectionEstablished();
+		void setOp  (QString op);
+		void setNum (QString num);
+		void setNum1(QString num1);
+		QString getOp();
+		QString getNum ();
+		QString getNum1();
 		QNetworkReply* m_reply;
 	signals:
 		QList<QSslError> sslErrorsReceived(QNetworkReply* reply, QList<QSslError> sslError);
@@ -79,6 +85,8 @@ namespace Network {
 		static void setManager(const Manager* manager);
 		QString chId;
 		
+		QString m_op, m_num, m_num1;
+
 		// post ---> this.qnam.post(request, data)
 		
 		void invokeFunc();
