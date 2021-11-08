@@ -30,7 +30,7 @@ Start the Qt SSE demo with our SSE demo server as URL:
 
 examples:
 
-`qt-sse-demo.exe http://localhost:3000/ diff 5 3' `qt-sse-demo.exe http://localhost:3000/ add 2 4'
+`qt-sse-demo.exe http://localhost:3000/ diff 5 3` `qt-sse-demo.exe http://localhost:3000/ add 2 4`
 
 the server wait for a random time then send response to subscriber at http://localhost:3000/{channelId}/listen
 
