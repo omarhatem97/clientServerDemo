@@ -78,5 +78,5 @@ app.get("/:channelId/listen", function (req, res) {
 });
 
 https.createServer(options, app).listen(3000, function () {
-  console.log("SSE Tchat listening on port 3000!");
+  console.log("SSE Server listening on port 3000!");
 });
